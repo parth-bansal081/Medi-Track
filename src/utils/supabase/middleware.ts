@@ -67,7 +67,7 @@ export async function updateSession(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    const role = profile?.role
+    const role = profile?.role || user.user_metadata?.role || 'patient'
 
     // Admin-Portal protection
     if (path.startsWith('/admin-portal') && path !== '/admin-portal/login') {

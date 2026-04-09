@@ -12,6 +12,7 @@ export default function SignupPage() {
   const [fullName, setFullName] = useState('')
   const [role, setRole] = useState<'patient' | 'doctor'>('patient')
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClient()
@@ -36,8 +37,37 @@ export default function SignupPage() {
       setError(error.message)
       setLoading(false)
     } else {
-      router.push('/login?message=Check your email to confirm your account')
+      setSuccess(true)
+      setLoading(false)
     }
+  }
+
+  if (success) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#F0F7FF]">
+        <Link href="/" className="flex items-center gap-2 mb-8">
+          <PlusSquare className="h-8 w-8 text-primary" />
+          <span className="text-2xl font-bold text-slate-900 tracking-tight">PharmaTech</span>
+        </Link>
+        
+        <div className="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl shadow-blue-100 border border-blue-50 text-center">
+          <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <PlusSquare className="h-10 w-10 text-green-500" />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">Check your email</h1>
+          <p className="text-slate-500 mb-8">
+            We've sent a confirmation link to <span className="font-semibold text-slate-900">{email}</span>. 
+            Please check your inbox (and spam folder) to activate your account.
+          </p>
+          <Link 
+            href="/login" 
+            className="inline-block w-full py-4 bg-primary text-white font-bold rounded-2xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200"
+          >
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { PlusSquare, Loader2 } from 'lucide-react'
+import { PlusSquare, Loader2, Info } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -12,6 +12,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const message = searchParams.get('message')
   const supabase = createClient()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -35,7 +37,7 @@ export default function LoginPage() {
         .eq('id', user.id)
         .single()
       
-      const role = profile?.role || 'patient'
+      const role = profile?.role || user.user_metadata?.role || 'patient'
       
       if (role === 'admin') {
          // Standard login doesn't allow admin access? 
@@ -82,6 +84,13 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
+
+          {message && (
+            <div className="flex items-center gap-2 p-4 bg-blue-50 text-blue-700 rounded-xl text-sm font-medium border border-blue-100">
+              <Info className="w-4 h-4" />
+              {message}
+            </div>
+          )}
 
           {error && <p className="text-red-500 text-sm mt-2 font-medium">{error}</p>}
 
